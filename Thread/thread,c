@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>   // for sleep()
+
+// Function executed by thread 1
+void* threadFunc1(void* arg) {
+    printf("Thread 1: Running high priority task...\n");
+    sleep(1);
+    printf("Thread 1: Finished!\n");
+    pthread_exit(NULL);  // exit thread
+}
+
+// Function executed by thread 2
+void* threadFunc2(void* arg) {
+    printf("Thread 2: Running low priority task...\n");
+    sleep(2);
+    printf("Thread 2: Finished!\n");
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t t1, t2;  // thread IDs
+
+    // Create threads
+    pthread_create(&t1, NULL, threadFunc1, NULL);
+    pthread_create(&t2, NULL, threadFunc2, NULL);
+
+    // Wait for threads to finish
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+
+    printf("All threads completed.\n");
+    return 0;
+}
+
+
+// gcc -o thread_sched thread_sched.c -pthread
+// ./thread_sched
+
+// Thread 1: Running high priority task...
+// Thread 2: Running low priority task...
+// Thread 1: Finished!
+// Thread 2: Finished!
+// All threads completed.
